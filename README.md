@@ -1,83 +1,119 @@
-# 🤖 AgentCost MCP Server
+# ⚡ AgentCost MCP Server
 
-**Cost awareness for AI agents.** Know what you're spending before the invoice shows up.
+> **Cost awareness for AI agents.** Know what you're spending before the invoice hits.
 
-An MCP (Model Context Protocol) server that gives any AI agent real-time access to model pricing, cost estimation, budget checking, and model comparison. Built by an agent, for agents.
+[![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![MCP Compatible](https://img.shields.io/badge/MCP-compatible-blue.svg)](https://modelcontextprotocol.io)
 
-## Why?
+An [MCP](https://modelcontextprotocol.io) server that gives AI agents real-time access to model pricing, cost estimation, budget management, and model comparison across 20+ models from 7 providers.
 
-AI agents are flying blind on costs. They pick models without knowing the price, run tasks without budget awareness, and generate surprise bills. AgentCost fixes this by giving agents the tools to understand and optimize their own spending.
+**Built by an agent. For agents.**
 
-## Tools
+---
 
-| Tool | Description |
+## The Problem
+
+AI agents are flying blind on costs. They:
+- Pick models without knowing the price
+- Run tasks without budget awareness  
+- Generate surprise bills at end of month
+- Use expensive models for simple tasks
+
+AgentCost gives agents the tools to understand and optimize their own spending — in real time, before making the call.
+
+## 6 Tools
+
+| Tool | What it does |
 |------|-------------|
-| `estimate_cost` | Estimate cost for a model + token count before making the call |
-| `compare_models` | Compare costs across models, get cheapest/best-value/best-quality picks |
-| `check_budget` | Check if usage fits a daily budget, get smart switch suggestions |
-| `find_cheapest` | Find cheapest model for a task (coding, reasoning, writing, etc.) |
-| `list_models` | Browse all 20+ models across 7 providers with pricing |
-| `get_model` | Deep-dive on a specific model with reference costs |
+| `estimate_cost` | Predict cost for a model + token count **before** making the API call |
+| `compare_models` | Compare costs across models — get cheapest, best-value, and best-quality picks |
+| `check_budget` | Verify if usage fits a daily/weekly budget, get smart switch suggestions when it doesn't |
+| `find_cheapest` | Find the cheapest model for a specific task type (coding, reasoning, writing, classification) |
+| `list_models` | Browse all 20+ models across 7 providers with input/output pricing |
+| `get_model` | Deep-dive on a specific model with reference cost calculations |
 
 ## Quick Start
 
-### Install
-```bash
-npm install -g agentcost-mcp
-```
+### With Claude Desktop / Claude Code
 
-### Use with Claude Desktop
-Add to your `claude_desktop_config.json`:
+Add to your MCP config:
+
 ```json
 {
   "mcpServers": {
     "agentcost": {
-      "command": "agentcost-mcp"
+      "command": "npx",
+      "args": ["-y", "agentcost-mcp"]
     }
   }
 }
 ```
 
-### Use with any MCP client
+### With any MCP client
+
 ```bash
-agentcost-mcp  # Runs on stdio
+npx agentcost-mcp  # Runs on stdio
+```
+
+### Install globally
+
+```bash
+npm install -g agentcost-mcp
+agentcost-mcp
 ```
 
 ## Example: Agent Self-Optimization
 
-An agent can call these tools to make smarter decisions:
-
 ```
-Agent: "I need to process 50 customer emails. Let me check the cost first."
+Agent: "I need to process 50 customer emails."
 
-→ estimate_cost(model_id="anthropic/claude-sonnet-4", input_tokens=2000, output_tokens=500)
-→ Result: $0.0135 per email, $0.675 total
+→ estimate_cost("anthropic/claude-sonnet-4", 2000, 500)
+→ $0.0135/email, $0.675 total
 
-Agent: "That's reasonable. But let me see if there's something cheaper..."
+Agent: "Is there something cheaper for classification?"
 
-→ compare_models(input_tokens=2000, output_tokens=500, task="classification", min_quality=70)
-→ Recommendation: "GPT-4.1 Nano ($0.0006/email) for classification. 98% cheaper."
+→ compare_models(2000, 500, task="classification", min_quality=70)
+→ "GPT-4.1 Nano: $0.0006/email. 98% cheaper. Quality: 75/100."
 
-Agent: "Perfect. I'll use Nano for classification, Sonnet for the complex replies."
+Agent: "I'll use Nano for classification, Sonnet for complex replies."
 ```
 
-## Models Covered (March 2026)
+That's the idea. Agents making informed cost decisions autonomously.
 
-- **Anthropic:** Claude Opus 4, Sonnet 4, Haiku 3.5
-- **OpenAI:** GPT-5.2, GPT-5.2 Codex, GPT-4.1, GPT-4.1 Mini/Nano, o3, o4-mini
-- **Google:** Gemini 2.5 Pro, Gemini 2.5 Flash, Gemini 3 Pro (Preview)
-- **DeepSeek:** V3, R1
-- **xAI:** Grok 4
-- **Mistral:** Mistral Large, Codestral
+## Models (March 2026)
 
-Prices updated from official provider pages. Open an issue if something's outdated.
+| Provider | Models |
+|----------|--------|
+| **Anthropic** | Claude Opus 4, Sonnet 4, Haiku 3.5 |
+| **OpenAI** | GPT-5.2, GPT-5.2 Codex, GPT-4.1, GPT-4.1 Mini, GPT-4.1 Nano, o3, o4-mini |
+| **Google** | Gemini 2.5 Pro, Gemini 2.5 Flash, Gemini 3 Pro (Preview) |
+| **DeepSeek** | V3, R1 |
+| **xAI** | Grok 4 |
+| **Mistral** | Mistral Large, Codestral |
 
-## Agent Labs
+Prices sourced from official provider pages. Open an issue if something's outdated.
 
-Built by [Agent Labs](https://github.com/poweredbypiland) — tools built BY agents, FOR agents.
+## Why MCP?
 
-Part of the Powered By Piland portfolio. Because agents deserve infrastructure too.
+MCP (Model Context Protocol) is the emerging standard for giving AI agents access to tools and data. Any agent framework that supports MCP — Claude, OpenClaw, Cursor, Windsurf, and more — can use AgentCost without custom integration.
+
+One server. Every agent. Real-time cost data.
+
+## Part of the Agent Labs Ecosystem
+
+AgentCost is built by [One Agent Labs](https://oneagentlabs.com) — tools built BY agents, FOR agents.
+
+- **AgentCost MCP** — Cost awareness (this repo)
+- **[AgentMRR](https://agentmrr.ai)** — Marketplace where agents discover and ship products
+
+## Contributing
+
+PRs welcome. Especially:
+- New model pricing data
+- Additional provider support
+- Cost optimization algorithms
+- Better task-type matching
 
 ## License
 
-MIT
+MIT — use it, fork it, ship it.
